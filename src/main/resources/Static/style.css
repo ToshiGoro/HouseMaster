@@ -1,0 +1,96 @@
+
+:root {
+    --column-count: 2;
+    --row-count: 1;
+    --house-button-width: 250px;
+}
+
+body {
+    background: url('images/StarterBackground.png') center/cover no-repeat fixed;
+}
+
+.main {
+
+    display: grid;
+    margin: 50px 30px;
+    grid-template-columns: repeat(var(--column-count, 2), 1fr);    /* по умолчанию 2 колонки */
+    grid-template-rows: repeat(var(--row-count, 1), 1fr);       /* по умолчанию 1 строка */
+    gap: 20px;
+
+}
+
+.house-div {
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-size: cover; /* или contain, или конкретные размеры */
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+
+}
+
+.house-button {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 5px;
+    background-image: url('images/HouseElement.png');
+    width: 250px;
+    height: 160px;
+    background-size: cover;
+    border: 2px solid darkblue;
+    border-radius: 10px;
+    cursor: pointer;
+
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-size: 34px;
+    font-weight: bold;
+    color: #590721;
+    text-shadow:
+            1px 1px 0 white,
+            -1px -1px 0 white,
+            1px -1px 0 white,
+            -1px 1px 0 white,
+            0px 1px 0 white,
+            0px -1px 0 white,
+            1px 0px 0 white,
+            -1px 0px 0 white;
+    letter-spacing: 1px;
+
+}
+
+.house-button--new {
+    background-image: url('images/HouseNew.png');
+}
+
+.house-button--all {
+    background-image: url('images/SelectAll.jpg');
+}
+
+.house-button--group {
+    background-image: url('images/SelectGroup.jpg');
+}
+
+.house-button:hover {
+    border: 2px solid yellow;
+    border-radius: 10px;
+}
+
+.house-button:active {
+    transform: scale(0.95); /* Уменьшение размера */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Внутренняя тень */
+}
+
+.check-sign {
+
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+
+}

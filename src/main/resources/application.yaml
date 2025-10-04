@@ -6,13 +6,13 @@ spring:
     name: stores
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/store_db
+    url: jdbc:postgresql://localhost:5432/house_db
     username: postgres
-    password: 12345
+    password: ${DATABASE_PASSWORD:}
 
   jpa:
     hibernate:
-     ddl-auto: update
+      ddl-auto: update
     show-sql: true
 
     properties:
@@ -20,8 +20,8 @@ spring:
       format_sql: true
 
   web:
-      resources:
-        add-mappings: false
+    resources:
+      add-mappings: false
 
 springdoc:
   api-docs:

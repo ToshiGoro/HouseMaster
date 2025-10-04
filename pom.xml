@@ -8,7 +8,7 @@
         <!--  lookup parent from repository  -->
     </parent>
     <groupId>Java412</groupId>
-    <artifactId>StoreManagementApplication</artifactId>
+    <artifactId>HouseManagementApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>StoreManagementApplication</name>
     <description>StoreManagementApplication</description>
