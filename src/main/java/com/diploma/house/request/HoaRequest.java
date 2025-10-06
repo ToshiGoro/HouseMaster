@@ -17,7 +17,7 @@ public class HoaRequest {
 
     @Schema(description = "Наименование ТСЖ")
     @JsonProperty("name")
-    @NotBlank
+    @NotBlank(message = "Необходимо указать наименование ТСЖ!")
     private String name;
 
     @Schema(description = "Дата создания ТСЖ")

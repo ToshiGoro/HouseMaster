@@ -1,32 +1,31 @@
 package com.diploma.house.entity;
 
+import com.diploma.house.audits.HoaEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "hoas")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@ToString(exclude = "houses")
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@EntityListeners(AuditingEntityListener.class)
-@EnableJpaAuditing
+@EntityListeners({AuditingEntityListener.class, HoaEntityListener.class})
 public class Hoa {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
     @Column(nullable = false)
@@ -39,12 +38,36 @@ public class Hoa {
     @Column
     private LocalDateTime liquidationDate;
 
-    @Column
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany
-    private List<House> houses;
+    @OneToMany(
+            mappedBy = "hoa",
+            fetch = FetchType.LAZY
+    )
 
+    private List<House> houses = new ArrayList<>();
+
+    public void addHouse(House house) {
+
+        if (!houses.contains(house)) {
+            houses.add(house);
+            house.setHoa(this);
+        }
+
+    }
+
+    public void removeHouse(House house) {
+        houses.remove(house);
+        house.setHoa(null);
+    }
+
+    public void clearHouses() {
+        for (House house : new ArrayList<>(houses)) {
+            removeHouse(house);
+        }
+    }
 
 }
+
+

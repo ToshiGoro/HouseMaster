@@ -23,21 +23,21 @@ public class HouseResponseDto {
     private UUID hoaId;
 
     @Schema(description = "Общая площадь помещений дома")
-    private double livingArea;
+    private Double livingArea;
 
     @Schema(description = "Количество этажей в доме")
-    private int numOfFloors;
+    private Integer numOfFloors;
 
     @Schema(description = "Количество подъездов в доме")
-    private int numOfSections;
+    private Integer numOfSections;
 
     @Schema(description = "Количество входных групп дома")
-    private int numOfEntrances;
+    private Integer numOfEntrances;
 
     @Schema(description = "Количество квартир в доме")
-    private int numOfFlats;
+    private Integer numOfFlats;
 
     @Schema(description = "Количество нежилых помещений в доме")
-    private int numOfOffices;
+    private Integer numOfOffices;
 
 }

@@ -2,13 +2,13 @@ package com.diploma.house.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Schema(description = "DTO запроса создания дома")
@@ -19,35 +19,39 @@ public class HouseRequest {
 
     @Schema(description = "Адрес дома")
     @JsonProperty("address")
-    @NotBlank
+    @NotBlank(message = "Адрес дома обязателен для заполнения")
     private String address;
 
-    @Schema(description = "Идентификатор ТСЖ")
-    @JsonProperty("hoaId")
+    @Schema(description = "ID ТСЖ (опционально)")
+    @JsonProperty("hoa")
     private UUID hoaId;
 
     @Schema(description = "Общая площадь помещений дома")
     @JsonProperty("livingArea")
-    private double livingArea;
+    private Double livingArea;
 
     @Schema(description = "Количество этажей в доме")
+    @Positive(message = "Количество этажей должно быть положительным")
     @JsonProperty("numOfFloors")
-    private int numOfFloors;
+    private Integer numOfFloors;
 
     @Schema(description = "Количество подъездов в доме")
+    @Positive(message = "Количество подъездов должно быть положительным")
     @JsonProperty("numOfSections")
-    private int numOfSections;
+    private Integer numOfSections;
 
     @Schema(description = "Количество входных групп дома")
+    @Positive(message = "Количество входных групп должно быть положительным")
     @JsonProperty("numOfEntrances")
-    private int numOfEntrances;
+    private Integer numOfEntrances;
 
     @Schema(description = "Количество квартир в доме")
     @JsonProperty("numOfFlats")
-    private int numOfFlats;
+    private Integer numOfFlats;
 
     @Schema(description = "Количество нежилых помещений в доме")
+    @PositiveOrZero(message = "Количество нежилых помещений не может быть отрицательным")
     @JsonProperty("numOfOffices")
-    private int numOfOffices;
+    private Integer numOfOffices;
 
 }

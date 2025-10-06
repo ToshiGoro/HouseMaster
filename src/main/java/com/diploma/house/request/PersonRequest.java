@@ -31,7 +31,7 @@ public class PersonRequest {
 
     @Schema(description = "Пол")
     @JsonProperty("gender")
-    private boolean gender;
+    private Boolean gender;
 
     @Schema(description = "Дата рождения")
     @JsonProperty("birthDate")

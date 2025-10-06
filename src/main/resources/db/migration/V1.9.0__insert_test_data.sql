@@ -12,8 +12,17 @@ FROM persons;
 DELETE
 FROM hoas;
 
--- Заполнение таблицы stores (магазины)
--- Добавляем несколько магазинов на улице Ленина для тестирования поиска по улице
+INSERT INTO hoas (id, name, creation_date, liquidation_date, updated_at)
+VALUES ('550e8400-e29b-41d4-a716-446655460001', 'Сосна', '2024-07-29',
+        null, NOW()),
+       ('550e8400-e29b-41d4-a716-446655460002', 'Ивушка', '2025-07-03',
+        null, NOW()),
+       ('550e8400-e29b-41d4-a716-446655460003', 'Дубок', '2020-12-08',
+        null, NOW()),
+       ('550e8400-e29b-41d4-a716-446655460004', 'Липа', '2023-03-15',
+        null, NOW())
+;
+
 INSERT INTO houses (id, address, hoa_id, living_area, num_of_floors, num_of_sections, num_of_entrances,
                     num_of_flats, num_of_offices, updated_at)
 VALUES ('550e8400-e29b-41d4-a716-446655440001', 'Пр-т Ленина, 41',
@@ -30,7 +39,8 @@ VALUES ('550e8400-e29b-41d4-a716-446655440001', 'Пр-т Ленина, 41',
         1, 1, 180, 6, NOW()),
        ('550e8400-e29b-41d4-a716-446655440005', 'Пр-т Ленина, 44',
         '550e8400-e29b-41d4-a716-446655460004', 12001.34, 19,
-        1, 1, 180, 6, NOW());
+        1, 1, 180, 6, NOW())
+;
 
 INSERT INTO persons (id, first_name, second_name, last_name, gender, birth_date, updated_at)
 VALUES ('550e8400-e29b-41d4-a716-446655450001', 'Иван', 'Петрович', 'Сидоров',
@@ -51,15 +61,4 @@ VALUES ('550e8400-e29b-41d4-a716-446655450001', 'Иван', 'Петрович', 
         true, '1993-09-01', NOW()),
        ('550e8400-e29b-41d4-a716-446655450009', 'Олег', 'Константинович', 'Стеклов',
         true, '1973-12-10', NOW())
-;
-
-INSERT INTO hoas (id, name, creation_date, liquidation_date, updated_at)
-VALUES ('550e8400-e29b-41d4-a716-446655460001', 'Сосна', '2024-07-29',
-        null, NOW()),
-       ('550e8400-e29b-41d4-a716-446655460002', 'Ивушка', '2025-07-03',
-        null, NOW()),
-       ('550e8400-e29b-41d4-a716-446655460003', 'Дубок', '2020-12-08',
-        null, NOW()),
-       ('550e8400-e29b-41d4-a716-446655460004', 'Липа', '2023-03-15',
-        null, NOW())
 ;

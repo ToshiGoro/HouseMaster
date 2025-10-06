@@ -11,7 +11,7 @@ public class HouseMapper {
         return new HouseResponseDto(
                 house.getId(),
                 house.getAddress(),
-                house.getHoaId(),
+                house.getHoa() == null ? null : house.getHoa().getId(),
                 house.getLivingArea(),
                 house.getNumOfFloors(),
                 house.getNumOfSections(),

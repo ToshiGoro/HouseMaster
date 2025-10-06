@@ -5,52 +5,80 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "houses")
-@AllArgsConstructor
-@Data
+@Entity
+@Table(name = "houses")
+@Getter
+@Setter
+@ToString(exclude = "hoa")
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
-@EnableJpaAuditing
 public class House {
 
     @Id
-    @Column
+    @EqualsAndHashCode.Include
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column
-    @NotBlank
+    @Column(nullable = false)
+    @NotBlank(message = "Адрес дома обязателен для заполнения")
     private String address;
 
-    @ManyToOne
+    // Связь может быть nullable - дом может существовать без ТСЖ
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hoa_id")
     private Hoa hoa;
 
     @Column
-    private double livingArea;
+    private Double livingArea;
 
     @Column
-    private int numOfFloors;
+    private Integer numOfFloors;
 
     @Column
-    private int numOfSections;
+    private Integer numOfSections;
 
     @Column
-    private int numOfEntrances;
+    private Integer numOfEntrances;
 
     @Column
-    private int numOfFlats;
+    private Integer numOfFlats;
 
     @Column
-    private int numOfOffices;
+    private Integer numOfOffices;
 
-    @Column
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    // Метод для присоединения к ТСЖ
+    public void joinHoa(Hoa hoa) {
+
+        if (this.hoa != null) {
+            this.hoa.removeHouse(this); // Выходим из старого ТСЖ
+        }
+
+        this.hoa = hoa;
+
+        if (hoa != null && !hoa.getHouses().contains(this)) {
+            hoa.addHouse(this); // Добавляем в новое ТСЖ
+        }
+
+    }
+
+    // Метод для выхода из ТСЖ
+    public void leaveHoa() {
+
+        if (this.hoa != null) {
+            Hoa currentHoa = this.hoa;
+            this.hoa = null;
+            currentHoa.removeHouse(this);
+        }
+
+    }
 
 }

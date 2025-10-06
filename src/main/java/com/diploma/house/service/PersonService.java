@@ -28,7 +28,7 @@ public class PersonService {
     public PersonResponseDto createPerson(@Valid PersonRequest request) {
 
         Person person = new Person(UUID.randomUUID(), request.getFirstName(), request.getSecondName(),
-                request.getLastName(), request.isGender(), request.getBirthDate(), null);
+                request.getLastName(), request.getGender(), request.getBirthDate(), null);
         personRepository.saveAndFlush(person);
 
         return personMapper.mapToPersonResponseDto(person);
@@ -50,7 +50,7 @@ public class PersonService {
         person.setFirstName(request.getFirstName());
         person.setSecondName(request.getSecondName());
         person.setLastName(request.getLastName());
-        person.setGender(request.isGender());
+        person.setGender(request.getGender());
         person.setBirthDate(request.getBirthDate());
 
         personRepository.saveAndFlush(person);

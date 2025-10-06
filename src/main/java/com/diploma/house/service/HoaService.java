@@ -2,9 +2,12 @@ package com.diploma.house.service;
 
 import com.diploma.house.dto.HoaResponseDto;
 import com.diploma.house.entity.Hoa;
+import com.diploma.house.entity.House;
 import com.diploma.house.mapper.HoaMapper;
 import com.diploma.house.repository.HoaRepository;
+import com.diploma.house.repository.HouseRepository;
 import com.diploma.house.request.HoaRequest;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +27,38 @@ public class HoaService {
     @Autowired
     HoaMapper hoaMapper;
 
-    @Transactional(rollbackFor = Exception.class)
-    public HoaResponseDto createHoa(@Valid HoaRequest request) {
+    @Autowired
+    HouseRepository houseRepository;
 
-        Hoa hoa = new Hoa(UUID.randomUUID(), request.getName(), request.getCreationDate(), request.getLiquidationDate(),
-                null);
-        hoaRepository.saveAndFlush(hoa);
+    @Transactional(rollbackFor = Exception.class)
+    public HoaResponseDto createHoa(@Valid HoaRequest request, @Valid UUID houseId) {
+
+        // 1. Получаем Entity дома из репозитория
+        House house = houseRepository.findById(houseId)
+                .orElseThrow(() -> new EntityNotFoundException("Дом с ID " + houseId + " не найден"));
+
+        // 2. Проверяем, не привязан ли дом уже к другому ТСЖ
+        if (house.getHoa() != null) {
+            throw new IllegalStateException(
+                    "Дом по адресу " + house.getAddress() + " уже привязан к ТСЖ: " + house.getHoa().getName()
+            );
+        }
+
+        // 3. Создаем ТСЖ
+        Hoa hoa = new Hoa();
+        hoa.setId(UUID.randomUUID());
+        hoa.setName(request.getName());
+        hoa.setCreationDate(request.getCreationDate());
+        hoa.setLiquidationDate(request.getLiquidationDate());
+
+        // 4. Сохраняем Hoa ПЕРВЫМ
+        hoa = hoaRepository.save(hoa); // используем save(), а не saveAndFlush()
+
+        // 5. Устанавливаем связь
+        hoa.addHouse(house);
+
+        // 6. Сохраняем House (опционально, т.к. @Transactional обновит изменения)
+        houseRepository.save(house);
 
         return hoaMapper.mapToHoaResponseDto(hoa);
 
@@ -45,23 +74,35 @@ public class HoaService {
     @Transactional(rollbackFor = Exception.class)
     public HoaResponseDto updateHoa(UUID id, @Valid HoaRequest request) {
 
-        Hoa hoa = hoaRepository.findById(id).orElseThrow();
+        // 1. Проверяем существование ТСЖ с обработкой исключения
+        Hoa hoa = hoaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ТСЖ с ID " + id + " не найдено"));
 
+        // 2. Проверяем бизнес-логику (опционально)
+        if (request.getLiquidationDate() != null &&
+                request.getLiquidationDate().isBefore(request.getCreationDate())) {
+            throw new IllegalArgumentException("Дата ликвидации не может быть раньше даты создания");
+        }
+
+        // 3. Обновляем только разрешенные поля
         hoa.setName(request.getName());
         hoa.setCreationDate(request.getCreationDate());
         hoa.setLiquidationDate(request.getLiquidationDate());
 
-        hoaRepository.saveAndFlush(hoa);
+        // 4. save() не обязателен - изменения сохранятся благодаря @Transactional
+        // hoaRepository.save(hoa);
 
         return hoaMapper.mapToHoaResponseDto(hoa);
-
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteHoa(UUID id) {
 
-        hoaRepository.findById(id).orElseThrow();
-        hoaRepository.deleteById(id);
+        Hoa hoa = hoaRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("ТСЖ с ID " + id + " не найдено")
+        );
+
+        hoaRepository.delete(hoa);
 
     }
 

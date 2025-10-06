@@ -20,9 +20,9 @@ public class HoaController {
     HoaService hoaService;
 
     @PostMapping("/create")
-    public ResponseEntity<HoaResponseDto> createHoa(@Valid @RequestBody HoaRequest request) {
+    public ResponseEntity<HoaResponseDto> createHoa(@Valid @RequestBody HoaRequest request, UUID houseId) {
 
-        HoaResponseDto customerResponseDto = hoaService.createHoa(request);
+        HoaResponseDto customerResponseDto = hoaService.createHoa(request, houseId);
 
         return ResponseEntity.ok(customerResponseDto);
 
