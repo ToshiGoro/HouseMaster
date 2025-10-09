@@ -1,0 +1,19 @@
+body {
+    background: url('../../images/StarterBackground.png') center/cover no-repeat fixed;
+}
+
+.form-div {
+    justify-self: center;
+    background-color: rgba(0,0,255,5%);
+    padding: 20px;
+}
+
+.form-container { max-width: 600px; margin: 20px; }
+.form-row { display: flex; margin-bottom: 10px; align-items: center; }
+.label-column { width: 120px; font-weight: bold; padding-right: 15px; }
+.value-column { flex: 1; }
+input { width: 100%; padding: 5px; box-sizing: border-box; }
+.buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-start; }
+button { padding: 8px 16px; cursor: pointer; }
+.save-btn { background-color: #4CAF50; color: white; border: none; }
+.cancel-btn { background-color: #f44336; color: white; border: none; }

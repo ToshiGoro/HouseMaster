@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Просмотр и изменение параметров дома</title>
+        <link rel="stylesheet" href="edit-house-style.css">
+    </head>
+
+    <body>
+        <div class="form-div">
+            <form id="myForm" class="form-container">
+                <div class="form-row">
+                    <div class="label-column">Адрес:</div>
+                    <div class="value-column">
+                        <input type="text" id="address" maxlength="200">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">ТСЖ:</div>
+                    <div class="value-column">
+                        <input type="text" id="hoaName" maxlength="50">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">Этажность:</div>
+                    <div class="value-column">
+                        <input type="number" id="numOfFloors" max="100" min="1">
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button type="submit" class="save-btn">Сохранить</button>
+                    <button type="button" class="cancel-btn">Отменить</button>
+                </div>
+            </form>
+        </div>
+
+        <script src="../../config.js" defer></script>
+        <script src="editHouse.js" defer></script>
+
+    </body>
+
+</html>

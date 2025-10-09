@@ -1,5 +1,6 @@
 package com.diploma.house.service;
 
+import com.diploma.house.dto.HouseForStartPageResponseDto;
 import com.diploma.house.dto.HouseResponseDto;
 import com.diploma.house.entity.Hoa;
 import com.diploma.house.entity.House;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -82,6 +84,16 @@ public class HouseService {
 
     }
 
+    public List<HouseResponseDto> getAllHouses() {
+
+        List<House> houses = houseRepository.findAll();
+
+        return houses.stream()
+                .map(e -> houseMapper.mapToHouseResponseDto(e))
+                .toList();
+
+    }
+
     /**
      * Если при создании или изменении дома (House) передаётся идентификатор ТСЖ (hoaId), метод вносит объект hoa
      * в соответствующее поле объекта House, устанавливая таким образом реляционную связь.
@@ -95,6 +107,16 @@ public class HouseService {
                     .orElseThrow(() -> new EntityNotFoundException("ТСЖ не найдено"));
             house.setHoa(hoa);
         }
+
+    }
+
+    public List<HouseForStartPageResponseDto> getAllHousesForStartPage() {
+
+        List<House> houses = houseRepository.findAll();
+
+        return houses.stream()
+                .map(e -> houseMapper.mapToHouseForStartPageResponseDto(e))
+                .toList();
 
     }
 

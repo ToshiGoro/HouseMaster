@@ -1,8 +1,4 @@
-//TODO: получать HTTP-запросом GET из приложения!
-let houses = ["Сосна", "Ивушка", "Каштан", "Клён", "Дубок", "Берёзка", "Ракита", "Ольха", "Липа"];
-let houseRange = houses.length; // Количество обслуживаемых домов
-
-
+var houses = [];
 const main = document.getElementById("main");
 
 window.onload = function () {
@@ -15,40 +11,46 @@ window.onresize = function () {
 
 function setStartPage() {
 
-    // Получаем ширину кнопки дома, чтобы рассчитать количество колонок на текущую ширину страницы.
-    main.innerHTML = "<button id=\"tempBtn\" class=\"house-button\" style=\"visibility: hidden;\"></button>";
-    let houseButton = document.getElementById("tempBtn");
-    let houseButtonWidth = parseInt(getComputedStyle(houseButton).width);
-    const buttonsInLine = Math.floor(main.offsetWidth / houseButtonWidth);
+    getAllHouses().then(
+        housesArray => {
+            houses = housesArray;
+            buildStartPage();
+        });
 
-    houseButton = null;
-    main.innerHTML = "";
-    let pageContent = ""; // Переменная для динамического формирования HTML-наполнения страницы
+    function buildStartPage() {
 
-    main.style.setProperty('--column-count', buttonsInLine);
-    main.style.setProperty('--row-count', Math.floor(houseRange / buttonsInLine));
+        let houseRange = houses.length; // Количество обслуживаемых домов
 
-    pageContent += "<div class=\"house-div\">" +
-        "<button id=\"newHouse\" class=\"house-button house-button--new\">" +
-        CREATE + "</button></div>";
+        // Получаем ширину кнопки дома, чтобы рассчитать количество колонок на текущую ширину страницы.
+        main.innerHTML = "<button id=\"tempBtn\" class=\"house-button\" style=\"visibility: hidden;\"></button>";
+        let houseButton = document.getElementById("tempBtn");
+        let houseButtonWidth = parseInt(getComputedStyle(houseButton).width);
+        const buttonsInLine = Math.floor(main.offsetWidth / houseButtonWidth);
 
-    pageContent += "<div class=\"house-div\">" +
-        "<button id=\"all\" class=\"house-button house-button--all\" onclick=\"selectedHouses(this.id)\">" +
-        ALL + "</button></div>";
+        houseButton = null;
+        main.innerHTML = "";
+        let pageContent = ""; // Переменная для динамического формирования HTML-наполнения страницы
 
-    pageContent += "<div class=\"house-div\">" +
-        "<button id=\"group\" class=\"house-button house-button--group\" onclick=\"selectedHouses(this.id)\">"
-        + GROUP + "</button></div>";
+        main.style.setProperty('--column-count', buttonsInLine.toString());
+        main.style.setProperty('--row-count', (Math.floor(houseRange / buttonsInLine)).toString());
 
-    for (let i = 0; i < houseRange; i++) {
         pageContent += "<div class=\"house-div\">" +
-            "<button id=\"btn" + i + "\" class=\"house-button\" onclick=\"houseBtnClicked(this.id)\">" + houses[i] + "</button>" +
-            "<label class=\"check-sign\">" +
-            "<img id=\"check" + i + "\" src=\"images/CheckSign.png\" width='40px' height='40px' style=\"visibility: hidden;\">" +
-            "</label></div>";
-    }
+            "<button id=\"newHouse\" class=\"house-button house-button--new\">" +
+            CREATE + "</button></div>";
+        //
+        // pageContent += "<div class=\"house-div\">" +
+        //     "<button id=\"all\" class=\"house-button house-button--all\">" +
+        //     ALL + "</button></div>";
+        //
+        // pageContent += "<div class=\"house-div\">" +
+        //     "<button id=\"group\" class=\"house-button house-button--group\">"
+        //     + GROUP + "</button></div>";
 
-    main.innerHTML = pageContent;
+        main.innerHTML = pageContent;
+
+        createHouseButtons(houses);
+
+    }
 
 }
 
@@ -77,4 +79,112 @@ function selectedHouses(selection) {
         console.log(selHouses);
     }
 
+}
+
+// Получение списка всех домов для формирования стартовой страницы
+async function getAllHouses() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/houses/getAllForStartPage`);
+
+        if (!response.ok) {
+            throw new Error(`Ошибка получения списка домов. Статус: ${response.status}`);
+        }
+
+        const houses = await response.json();
+        console.log('Получены дома:', houses);
+        return houses;
+
+    } catch (error) {
+        console.error('Ошибка при получении списка домов:', error);
+        return [];
+    }
+}
+
+function createHouseButtons(houses) {
+    main.innerHTML += houses.map((house, index) => `
+        <div class="house-div">
+            <button class="house-button" data-house-id="${house.id}" data-index="${index}">
+                <div class="button-div">
+                    <span class="span1">${house.address}</span>
+                    ${house.hoaName}
+                </div>
+            </button>
+            <label class="check-sign">
+                <img id="check${index}" src="images/CheckSign.png" width="40" height="40" style="visibility: hidden;">
+            </label>
+        </div>
+    `).join('');
+
+    // Делегирование событий
+    main.addEventListener('click', handleHouseButtonClick);
+}
+
+function handleHouseButtonClick(event) {
+    // Находим конкретную кнопку, на которую кликнули
+    const button = event.target.closest('.house-button');
+
+    if (!button) return; // если кликнули мимо кнопки
+
+    switch (button.id) {
+        case "newHouse":
+            window.location.href = 'House/EditHouse/editHouse.html';
+            break;
+        case "all":
+            alert("All");
+            break;
+        case "group":
+            alert("Group");
+            break;
+        default:
+            const houseId = button.dataset.houseId;
+            window.location.href = `House/house.html?houseId=${houseId}`;
+            break;
+    }
+
+    // Выполняем действия с выбранной кнопкой
+    // resetAllCheckMarks();          // сбрасываем все галочки
+    // showCheckMark(index);          // показываем галочку на этой кнопке
+    // highlightSelectedButton(button); // подсвечиваем кнопку
+    // processHouseSelection(houseId, houseData); // основная логика
+}
+
+function resetAllCheckMarks() {
+    document.querySelectorAll('.check-sign img').forEach(img => {
+        img.style.visibility = 'hidden';
+    });
+}
+
+function showCheckMark(index) {
+    const checkImg = document.getElementById(`check${index}`);
+    if (checkImg) {
+        checkImg.style.visibility = 'visible';
+    }
+}
+
+function highlightSelectedButton(selectedButton) {
+    // Сбрасываем подсветку у всех кнопок
+    document.querySelectorAll('.house-button').forEach(btn => {
+        btn.style.borderColor = '#ddd';
+        btn.style.transform = 'scale(1)';
+    });
+
+    // Подсвечиваем выбранную
+    selectedButton.style.borderColor = '#007bff';
+    selectedButton.style.transform = 'scale(1.02)';
+}
+
+function processHouseSelection(houseId, houseData) {
+    console.log('Выбран дом ID:', houseId);
+    console.log('Данные дома:', houseData);
+
+    // Здесь твоя основная логика:
+    // - Переход на другую страницу
+    // - Открытие модального окна
+    // - Отправка данных на сервер
+    // - и т.д.
+
+    // Например:
+    // openHouseDetailsPage(houseId);
+    // или
+    // showHouseModal(houseData);
 }

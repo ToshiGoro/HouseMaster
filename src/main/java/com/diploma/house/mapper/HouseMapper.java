@@ -1,5 +1,6 @@
 package com.diploma.house.mapper;
 
+import com.diploma.house.dto.HouseForStartPageResponseDto;
 import com.diploma.house.dto.HouseResponseDto;
 import com.diploma.house.entity.House;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,12 @@ public class HouseMapper {
                 house.getNumOfEntrances(),
                 house.getNumOfFlats(),
                 house.getNumOfOffices());
+    }
+
+    public HouseForStartPageResponseDto mapToHouseForStartPageResponseDto(House house) {
+
+        return new HouseForStartPageResponseDto(house);
+
     }
 
 }
