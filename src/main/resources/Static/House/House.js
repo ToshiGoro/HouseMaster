@@ -3,9 +3,10 @@ const houseId = urlParams.get('houseId');
 
 //Расписание функционала кнопок
 const buttonAction = [
-    ["Дом", `EditHouse/editHouse.html`, 'images/House.png'],
-    ["Штат", `https://google.com`, 'images/stuff.png'],
-    ["Жители", `house.html`, 'images/people.jpg']
+    ["Дом", "EditHouse/editHouse.html", "images/House.jpg"],
+    ["Штат", "https://google.com", "images/stuff.png"],
+    ["Жители", "house.html", 'images/people.jpg'],
+    ["На главную", "../index.html", "images/toHomePage.jpg"]
 ];
 
 const buttonRange = buttonAction.length;
@@ -66,7 +67,15 @@ function setHousePage() {
         if (!button) return; // если кликнули мимо кнопки
 
         let choice = parseInt(button.id.replaceAll(/\D/g, ""));
-        window.location.href = buttonAction[choice][1]+`?houseId=${houseId}`;
+        if (choice === 3) {
+            history.back();
+        } else {
+            window.open(
+                buttonAction[choice][1] + `?houseId=${houseId}`,
+                '_blank',
+                'noopener, noreferrer'
+            );
+        }
 
     }
 

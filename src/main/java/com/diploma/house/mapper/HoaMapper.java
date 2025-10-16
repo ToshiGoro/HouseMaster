@@ -1,5 +1,6 @@
 package com.diploma.house.mapper;
 
+import com.diploma.house.dto.HoaForHouseDisplayResponseDto;
 import com.diploma.house.dto.HoaResponseDto;
 import com.diploma.house.entity.Hoa;
 import com.diploma.house.entity.House;
@@ -43,4 +44,21 @@ public class HoaMapper {
         dto.setLivingArea(house.getLivingArea());
         return dto;
     }
+
+    /**
+     * Вспомогательный мэппер с коротким набором полей (id ТСЖ, наименование ТСЖ) для формы редактирования параметров
+     * дома во фронтэнде.
+     * @param hoa JAVA-объект ТСЖ с полным набором полей
+     * @return DTO с укороченным набором полей
+     */
+    public HoaForHouseDisplayResponseDto mapToHoaForHouseDisplayResponseDto(Hoa hoa) {
+
+        HoaForHouseDisplayResponseDto dto = new HoaForHouseDisplayResponseDto();
+        dto.setId(hoa.getId());
+        dto.setName(hoa.getName());
+
+        return dto;
+
+    }
+
 }

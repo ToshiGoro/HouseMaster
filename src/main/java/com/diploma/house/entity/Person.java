@@ -1,22 +1,22 @@
 package com.diploma.house.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-@Entity(name = "persons")
-@AllArgsConstructor
+@Entity
+@Table(name = "persons")
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
 public class Person {
 
@@ -40,6 +40,10 @@ public class Person {
 
     @Column
     private LocalDateTime birthDate;
+
+    @ManyToMany(mappedBy = "residents", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Flat> flats = new HashSet<>();
 
     @Column
     @LastModifiedDate

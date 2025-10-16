@@ -23,7 +23,7 @@ public class HouseRequest {
     private String address;
 
     @Schema(description = "ID ТСЖ (опционально)")
-    @JsonProperty("hoa")
+    @JsonProperty("hoaId")
     private UUID hoaId;
 
     @Schema(description = "Общая площадь помещений дома")

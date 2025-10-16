@@ -1,5 +1,6 @@
 package com.diploma.house.service;
 
+import com.diploma.house.dto.HoaForHouseDisplayResponseDto;
 import com.diploma.house.dto.HoaResponseDto;
 import com.diploma.house.entity.Hoa;
 import com.diploma.house.entity.House;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -69,6 +71,20 @@ public class HoaService {
         Hoa hoa = hoaRepository.findById(id).orElseThrow();
 
         return hoaMapper.mapToHoaResponseDto(hoa);
+    }
+
+    /**
+     * Метод собирает коллекцию всех ТСЖ с набором базовых полей - id и название
+     * @return Возвращает List объектов ТСЖ с полями id и наименование
+     */
+    public List<HoaForHouseDisplayResponseDto> getHoaForHouseDisplay() {
+
+        List<Hoa> hoas = hoaRepository.findAll();
+
+        return hoas.stream()
+                .map(e -> hoaMapper.mapToHoaForHouseDisplayResponseDto(e))
+                .toList();
+
     }
 
     @Transactional(rollbackFor = Exception.class)

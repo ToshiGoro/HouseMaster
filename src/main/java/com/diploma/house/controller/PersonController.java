@@ -3,8 +3,9 @@ package com.diploma.house.controller;
 import com.diploma.house.dto.PersonResponseDto;
 import com.diploma.house.request.PersonRequest;
 import com.diploma.house.service.PersonService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/persons")
+@RequestMapping("api/persons")
+@RequiredArgsConstructor
 @Validated
 public class PersonController {
 
-    @Autowired
-    PersonService personService;
+    private final PersonService personService;
 
+    @Operation(summary = "Создать новую запись о человеке")
     @PostMapping("/create")
     public ResponseEntity<PersonResponseDto> createPerson(@Valid @RequestBody PersonRequest request) {
 
@@ -28,6 +30,7 @@ public class PersonController {
 
     }
 
+    @Operation(summary = "Найти человека по id")
     @GetMapping("/get/{id}")
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable UUID id) {
 
@@ -37,6 +40,7 @@ public class PersonController {
 
     }
 
+    @Operation(summary = "Внести изменения в запись о человеке")
     @PutMapping("/update/{id}")
     public ResponseEntity<PersonResponseDto> updatePerson(@PathVariable UUID id,
                                                         @Valid @RequestBody PersonRequest request) {
@@ -47,6 +51,7 @@ public class PersonController {
 
     }
 
+    @Operation(summary = "Удалить сведения о человеке")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable UUID id) {
 

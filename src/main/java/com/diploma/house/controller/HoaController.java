@@ -1,6 +1,8 @@
 package com.diploma.house.controller;
 
+import com.diploma.house.dto.HoaForHouseDisplayResponseDto;
 import com.diploma.house.dto.HoaResponseDto;
+import com.diploma.house.dto.HouseResponseDto;
 import com.diploma.house.request.HoaRequest;
 import com.diploma.house.service.HoaService;
 import jakarta.validation.Valid;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,6 +37,15 @@ public class HoaController {
         HoaResponseDto customerResponseDto = hoaService.getHoa(id);
 
         return ResponseEntity.ok(customerResponseDto);
+
+    }
+
+    @GetMapping("/getAllHoaForHouseDisplay")
+    public ResponseEntity<List<HoaForHouseDisplayResponseDto>> getAllHoaForHouseDisplay() {
+
+        List<HoaForHouseDisplayResponseDto> dtos = hoaService.getHoaForHouseDisplay();
+
+        return ResponseEntity.ok(dtos);
 
     }
 

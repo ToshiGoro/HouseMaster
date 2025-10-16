@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +35,10 @@ public class House {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hoa_id")
     private Hoa hoa;
+
+    // Связь с квартирами - не может быть null, без дома квартиры не существуют
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Flat> apartments = new ArrayList<>();
 
     @Column
     private Double livingArea;

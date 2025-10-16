@@ -1,4 +1,4 @@
-var houses = [];
+var house = [];
 const main = document.getElementById("main");
 
 window.onload = function () {
@@ -13,13 +13,13 @@ function setStartPage() {
 
     getAllHouses().then(
         housesArray => {
-            houses = housesArray;
+            house = housesArray;
             buildStartPage();
         });
 
     function buildStartPage() {
 
-        let houseRange = houses.length; // Количество обслуживаемых домов
+        let houseRange = house.length; // Количество обслуживаемых домов
 
         // Получаем ширину кнопки дома, чтобы рассчитать количество колонок на текущую ширину страницы.
         main.innerHTML = "<button id=\"tempBtn\" class=\"house-button\" style=\"visibility: hidden;\"></button>";
@@ -35,20 +35,11 @@ function setStartPage() {
         main.style.setProperty('--row-count', (Math.floor(houseRange / buttonsInLine)).toString());
 
         pageContent += "<div class=\"house-div\">" +
-            "<button id=\"newHouse\" class=\"house-button house-button--new\">" +
-            CREATE + "</button></div>";
-        //
-        // pageContent += "<div class=\"house-div\">" +
-        //     "<button id=\"all\" class=\"house-button house-button--all\">" +
-        //     ALL + "</button></div>";
-        //
-        // pageContent += "<div class=\"house-div\">" +
-        //     "<button id=\"group\" class=\"house-button house-button--group\">"
-        //     + GROUP + "</button></div>";
+            "<button id=\"newHouse\" class=\"house-button house-button--new\">Создать</button></div>";
 
         main.innerHTML = pageContent;
 
-        createHouseButtons(houses);
+        createHouseButtons(house);
 
     }
 
@@ -66,14 +57,14 @@ function houseBtnClicked(buttonId) {
 function selectedHouses(selection) {
 
     if (selection === "all") {
-        console.log(houses);
+        console.log(house);
     }
 
     if (selection === "group") {
         let selHouses = [];
-        for (let i = 0; i < houses.length; i++) {
+        for (let i = 0; i < house.length; i++) {
             if (document.getElementById("check" + i).style.visibility === 'visible') {
-                selHouses.push(houses[i]);
+                selHouses.push(house[i]);
             }
         }
         console.log(selHouses);
@@ -91,7 +82,6 @@ async function getAllHouses() {
         }
 
         const houses = await response.json();
-        console.log('Получены дома:', houses);
         return houses;
 
     } catch (error) {

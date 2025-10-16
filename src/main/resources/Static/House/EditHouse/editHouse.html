@@ -20,7 +20,14 @@
                 <div class="form-row">
                     <div class="label-column">ТСЖ:</div>
                     <div class="value-column">
-                        <input type="text" id="hoaName" maxlength="50">
+                        <select id="hoaName" class="selector-class"></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">Общая площадь:</div>
+                    <div class="value-column">
+                        <input type="number" id="livingArea" max="99999" min="100">
                     </div>
                 </div>
 
@@ -31,9 +38,38 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="label-column">Подъездов:</div>
+                    <div class="value-column">
+                        <input type="number" id="numOfSections" max="20" min="1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">Входных групп:</div>
+                    <div class="value-column">
+                        <input type="number" id="numOfEntrances" max="20" min="1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">Квартир:</div>
+                    <div class="value-column">
+                        <input type="number" id="numOfFlats" max="1000" min="2">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="label-column">Нежилых помещений:</div>
+                    <div class="value-column">
+                        <input type="number" id="numOfOffices" max="100" min="0">
+                    </div>
+                </div>
+
                 <div class="buttons">
-                    <button type="submit" class="save-btn">Сохранить</button>
                     <button type="button" class="cancel-btn">Отменить</button>
+                    <button type="submit" class="save-btn">Сохранить</button>
+                    <button type="submit" class="save-close-btn">Сохранить и закрыть</button>
                 </div>
             </form>
         </div>

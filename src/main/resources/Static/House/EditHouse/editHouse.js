@@ -1,40 +1,98 @@
 
 const urlParams = new URLSearchParams(window.location.search);
-const houseId = urlParams.get('houseId');
+let houseId = urlParams.get('houseId');
 
 // Заполняем форму после загрузки DOM
 document.addEventListener('DOMContentLoaded', function() {
-    getHouse().then(
-        housesArray => {
-            houses = housesArray;
-            console.log(houses);
-            document.getElementById('address').value = houses.address;
-            document.getElementById('hoaName').value = houses.hoaId;
-            document.getElementById('numOfFloors').value = houses.numOfFloors;
+
+    if(houseId != null) { // Если houseId получен и мы редактируем существующий дом
+
+        getHouse().then(
+            houseReceivedData => {
+
+                house = houseReceivedData;
+
+                document.getElementById('address').value = house.address;
+                document.getElementById('livingArea').value = house.livingArea;
+                document.getElementById('numOfFloors').value = house.numOfFloors;
+                document.getElementById('numOfSections').value = house.numOfSections;
+                document.getElementById('numOfEntrances').value = house.numOfEntrances;
+                document.getElementById('numOfFlats').value = house.numOfFlats;
+                document.getElementById('numOfOffices').value = house.numOfOffices;
+
+            });
+
+    }
+
+    // Если дом новый, то его поля предъявляются пустыми, кроме выпадающего списка ТСЖ.
+    getHoaForHouseDisplay().then(
+        hoaArray => {
+
+            hoas = [{id: "none", name: "Без ТСЖ"}].concat(hoaArray);
+
+            hoaSelect = document.getElementById('hoaName');
+            hoas.forEach(e => {
+                const option = document.createElement('option');
+                option.value = e.id;
+                option.textContent = e.name;
+                hoaSelect.appendChild(option);
+            });
+
+            if(houseId != null) {
+                hoaSelect.value = house.hoaId; // Если дом существует, берём значение списка ТСЖ из поля дома hoaId,
+            } else {
+                hoaSelect.value = "none";        // а если нет - устанавливаем значение null - "Без ТСЖ".
+            }
+
         });
+
 });
+
+function handleSaveButtons(e, saveAndClose) {
+    e.preventDefault(); // предотвращаем отправку формы, чтобы был возможен возврат на вызывавшую страницу
+
+    if (validateForm()) {
+
+        let house = {
+        address: document.getElementById('address').value,
+        hoaId: hoaSelect.value === "none" ? null : hoaSelect.value,
+        livingArea: document.getElementById('livingArea').value,
+        numOfFloors: document.getElementById('numOfFloors').value,
+        numOfSections: document.getElementById('numOfSections').value,
+        numOfEntrances: document.getElementById('numOfEntrances').value,
+        numOfFlats: document.getElementById('numOfFlats').value,
+        numOfOffices: document.getElementById('numOfOffices').value};
+        console.log(house);
+
+        if (houseId != null) {
+            updateHouse(house).then(r => {
+                if (saveAndClose) window.close();
+            });
+        } else {
+            createHouse(house).then(r => {
+                houseId = r.id;
+                if (saveAndClose) window.close();
+            });
+        }
+
+    }
+
+}
 
 // Обработчик кнопки "Сохранить"
 document.querySelector('.save-btn').addEventListener('click', function(e) {
+    handleSaveButtons(e, false);
+});
 
-    e.preventDefault(); // ← ВАЖНО: предотвращаем отправку формы
-
-    if (validateForm()) {
-        goBackWithHouseId();
-    }
-
+// Обработчик кнопки "Сохранить и закрыть"
+document.querySelector('.save-close-btn').addEventListener('click', function(e) {
+    handleSaveButtons(e, true);
 });
 
 // Обработчик кнопки "Отменить"
 document.querySelector('.cancel-btn').addEventListener('click', function() {
-
-    goBackWithHouseId() ;
-
+    window.close();
 });
-
-function goBackWithHouseId() {
-    window.location.href = `${document.referrer}?houseId=${houseId}`;
-}
 
 function validateForm() {
     const address = document.getElementById('address').value.trim();
@@ -85,14 +143,76 @@ async function getHouse() {
         if (!response.ok) {
             throw new Error(`Ошибка получения данных дома. Статус: ${response.status}`);
         }
-
-        const house = await response.json();
-        console.log('Получен дом:', house);
-        return house;
+        return await response.json();
 
     } catch (error) {
         console.error('Ошибка при получении данных дома:', error);
         return null;
+    }
+
+}
+
+// Получение упрощённого объекта Hoa для представления в выпадающем списке
+async function getHoaForHouseDisplay() {
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/hoas/getAllHoaForHouseDisplay`);
+
+        if (!response.ok) {
+            throw new Error(`Ошибка получения данных ТСЖ. Статус: ${response.status}`);
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Ошибка при получении данных ТСЖ:', error);
+        return null;
+    }
+
+}
+
+async function updateHouse(houseOutgoingData) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/houses/update/${houseId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(houseOutgoingData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка передачи на сервер! Статус: ${response.status}`);
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Ошибка при обновлении дома:', error);
+        throw error;
+    }
+
+}
+
+async function createHouse(houseOutgoingData) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/houses/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(houseOutgoingData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка передачи на сервер! Статус: ${response.status}`);
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error('Ошибка при обновлении дома:', error);
+        throw error;
     }
 
 }
