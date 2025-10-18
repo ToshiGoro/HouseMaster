@@ -117,7 +117,11 @@ function handleHouseButtonClick(event) {
 
     switch (button.id) {
         case "newHouse":
-            window.location.href = 'House/EditHouse/editHouse.html';
+            // window.location.href = 'House/EditHouse/editHouse.html';
+            window.open('House/EditHouse/editHouse.html',
+            '_blank',
+            'noopener, noreferrer'
+        );
             break;
         case "all":
             alert("All");

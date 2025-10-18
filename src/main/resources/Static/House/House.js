@@ -4,9 +4,9 @@ const houseId = urlParams.get('houseId');
 //Расписание функционала кнопок
 const buttonAction = [
     ["Дом", "EditHouse/editHouse.html", "images/House.jpg"],
-    ["Штат", "https://google.com", "images/stuff.png"],
+    ["Штат", "Employees/Employees.html", "images/stuff.png"],
     ["Квартиры", "Flats/Flats.html", "images/flats.jpg"],
-    ["Жители", "house.html", 'images/people.jpg'],
+    ["Жители", "Residents/Residents.html", 'images/people.jpg'],
     ["На главную", "BackToMain", "images/toHomePage.jpg"]
 ];
 
@@ -73,8 +73,7 @@ function setHousePage() {
         } else {
             window.open(
                 buttonAction[choice][1] + `?houseId=${houseId}`,
-                '_blank',
-                'noopener, noreferrer'
+                '_blank','noopener, noreferrer'
             );
         }
 

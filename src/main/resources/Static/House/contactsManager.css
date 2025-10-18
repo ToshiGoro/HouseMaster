@@ -1,0 +1,166 @@
+/* Стили для менеджера контактов */
+.contacts-manager-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.contacts-manager-modal .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    border: 2px solid rgba(80, 80, 255, 70%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.contacts-manager-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.contacts-manager-modal .modal-title {
+    font-size: 1.4em;
+    color: rgba(80, 80, 255, 90%);
+    font-weight: 600;
+}
+
+.contacts-manager-modal .modal-close {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+    line-height: 1;
+}
+
+.contacts-manager-modal .modal-close:hover {
+    color: #000;
+}
+
+.contacts-manager-modal .person-info {
+    padding: 15px;
+    background: rgba(80, 80, 255, 0.05);
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.contacts-manager-modal .info-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.contacts-manager-modal .info-label {
+    font-weight: 600;
+    min-width: 120px;
+    color: #495057;
+}
+
+.contacts-manager-modal .info-value {
+    color: #212529;
+}
+
+.contacts-manager-modal .contacts-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.contacts-manager-modal .contact-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    gap: 15px;
+    transition: background-color 0.2s ease;
+}
+
+.contacts-manager-modal .contact-item:hover {
+    background-color: rgba(80, 80, 255, 0.05);
+}
+
+.contacts-manager-modal .add-contact-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(40, 167, 69, 0.05);
+    border-radius: 5px;
+}
+
+.contacts-manager-modal .modal-buttons {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.contacts-manager-modal .modal-btn {
+    padding: 8px 16px;
+    border: 1px solid rgba(80, 80, 255, 50%);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.contacts-manager-modal .btn-primary {
+    background-color: rgba(80, 80, 255, 70%);
+    color: white;
+}
+
+.contacts-manager-modal .btn-primary:hover {
+    background-color: rgba(80, 80, 255, 80%);
+}
+
+.contacts-manager-modal .btn-secondary {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.contacts-manager-modal .btn-secondary:hover {
+    background-color: #e9ecef;
+}
+
+.contacts-manager-modal .action-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.contacts-manager-modal .delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.contacts-manager-modal .delete-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+}
+
+.contacts-manager-modal .add-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.contacts-manager-modal .add-btn:hover {
+    background-color: #218838;
+    transform: scale(1.1);
+}

@@ -72,6 +72,8 @@ function handleSaveButtons(e, saveAndClose) {
             createHouse(house).then(r => {
                 houseId = r.id;
                 if (saveAndClose) window.close();
+                console.log(999999);
+                // if (saveAndClose) history.back();
             });
         }
 
@@ -91,6 +93,7 @@ document.querySelector('.save-close-btn').addEventListener('click', function(e) 
 
 // Обработчик кнопки "Отменить"
 document.querySelector('.cancel-btn').addEventListener('click', function() {
+    console.log(88888);
     window.close();
 });
 

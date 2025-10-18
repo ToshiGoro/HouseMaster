@@ -2,8 +2,6 @@ package com.diploma.house.service;
 
 import com.diploma.house.dto.FlatResponseDto;
 import com.diploma.house.entity.Flat;
-import com.diploma.house.entity.House;
-import com.diploma.house.entity.Person;
 import com.diploma.house.mapper.FlatMapper;
 import com.diploma.house.repository.FlatRepository;
 import com.diploma.house.repository.HouseRepository;
@@ -54,6 +52,14 @@ public class FlatService {
         Flat flat = flatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(FLAT_NOT_FOUND, id)));
+
+        if (!flat.getFlatNumber().equals(request.getFlatNumber())) {
+            throw new IllegalArgumentException("Изменение номера квартиры запрещено");
+        }
+
+        if (!flat.getHouse().getId().equals(request.getHouseId())) {
+            throw new IllegalArgumentException("Изменение привязки квартиры к дому запрещено");
+        }
 
         return flatMapper.mapToFlatResponseDto(flat);
 

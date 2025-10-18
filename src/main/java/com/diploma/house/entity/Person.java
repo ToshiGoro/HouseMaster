@@ -46,8 +46,18 @@ public class Person {
     @ToString.Exclude
     private Set<Flat> flats = new HashSet<>();
 
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<Contact> contacts = new HashSet<>();
+
     @Column
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public String getFullName() {
+
+        return firstName + " " + secondName + " " + lastName;
+
+    }
 
 }

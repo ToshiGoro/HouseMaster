@@ -7,9 +7,9 @@ spring:
     name: stores
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/house_db
+    url: jdbc:postgresql://localhost:5432/house_db?useUnicode=true&characterEncoding=UTF-8&stringtype=unspecified
     username: postgres
-    password: SufferingIsAWayToHeaven
+    password:
 
   jpa:
     hibernate:
@@ -18,6 +18,11 @@ spring:
 
     properties:
       hibernate:
+        connection:
+          characterEncoding: UTF-8
+          CharSet: UTF-8
+          useUnicode: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
 
   web:
