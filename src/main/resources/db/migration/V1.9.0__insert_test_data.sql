@@ -102,10 +102,24 @@ VALUES ('550e8400-e29b-41d4-a716-446655450001', 'Иван', 'Петрович', 
         true, '1987-08-17', NOW()),
        ('550e8400-e29b-41d4-a716-446655450030', 'Андрей', 'Павлович', 'Крылов',
         true, '1975-12-12', NOW()),
-       ('550e8400-e29b-41d4-a716-446655450031', 'Елена', 'Васильевна', 'Кузнецова',
-        false, '1986-05-10', NOW()),
-       ('550e8400-e29b-41d4-a716-446655450032', 'Кристина', 'Игоревна', 'Ульянова',
-        false, '2000-11-03', NOW())
+       ('550e8400-e29b-41d4-a716-446655450031', 'Екатерина', 'Алексеевна', 'Кольцова',
+        false, '1982-12-10', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450032', 'Арина', 'Юрьевна', 'Москалёва',
+        false, '1987-05-08', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450033', 'Светлана', 'Владимировна', 'Чайкина',
+        false, '1996-05-03', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450034', 'Ада', 'Семёновна', 'Штейн',
+        false, '1979-08-11', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450035', 'Лилит', 'Аванесовна', 'Акопян',
+        false, '1994-11-19', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450036', 'Карина', 'Сергеевна', 'Надеждина',
+        false, '1999-01-12', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450037', 'Татьяна', 'Игоревна', 'Бугрова',
+        false, '2003-01-23', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450038', 'Евгения', 'Павловна', 'Тимохина',
+        false, '2005-02-25', NOW()),
+       ('550e8400-e29b-41d4-a716-446655450039', 'Кристина', 'Игоревна', 'Ульянова',
+        false, '1974-11-03', NOW())
 ;
 -- Заполнение пулом квартир изначально создаваемых домов
 INSERT INTO flats (id, flat_number, house_id, updated_at)
@@ -124,7 +138,7 @@ FROM (
 
 -- Заселим жителей в дом с UUID = 550e8400-e29b-41d4-a716-446655440001 (Пр-т Ленина, 41)
 WITH numbered_flats AS (
-    SELECT id, ROW_NUMBER() OVER (ORDER BY id) as rn
+    SELECT id, ROW_NUMBER() OVER (ORDER BY flat_number) as rn  -- ← ИСПРАВЛЕНО!
     FROM flats
     WHERE house_id = '550e8400-e29b-41d4-a716-446655440001'::uuid
 ),
@@ -139,3 +153,103 @@ SELECT
     p.id
 FROM numbered_flats f
          JOIN numbered_persons p ON f.rn = p.rn;
+
+-- =====================================================
+-- Добавление дополнительных собственников для создания
+-- квартир с несколькими жильцами в том же доме
+-- =====================================================
+
+-- Добавляем троим существующим жильцам дополнительные доли в других квартирах того же дома
+
+INSERT INTO flat_person (id, flat_id, person_id)
+SELECT
+    gen_random_uuid(),
+    flat_id,
+    person_id
+FROM (
+         -- Выбираем 3 случайных жильца
+         SELECT id as person_id
+         FROM persons
+         WHERE id IN (
+                      '550e8400-e29b-41d4-a716-446655450001', -- Иван Сидоров
+                      '550e8400-e29b-41d4-a716-446655450002', -- Игорь Печкин
+                      '550e8400-e29b-41d4-a716-446655450003', -- Алексей Травкин
+                      '550e8400-e29b-41d4-a716-446655450004', -- Мария Сверчкова
+                      '550e8400-e29b-41d4-a716-446655450005'  -- Анна Зимина
+             )
+         ORDER BY random()
+         LIMIT 3
+     ) persons
+         CROSS JOIN (
+    -- Выбираем 3 случайные квартиры из того же дома (Ленина, 41)
+    -- но исключаем квартиры, где эти люди уже проживают
+    SELECT f.id as flat_id
+    FROM flats f
+    WHERE f.house_id = '550e8400-e29b-41d4-a716-446655440001'::uuid
+      AND f.id NOT IN (
+        SELECT fp.flat_id
+        FROM flat_person fp
+        WHERE fp.person_id IN (
+                               '550e8400-e29b-41d4-a716-446655450001',
+                               '550e8400-e29b-41d4-a716-446655450002',
+                               '550e8400-e29b-41d4-a716-446655450003',
+                               '550e8400-e29b-41d4-a716-446655450004',
+                               '550e8400-e29b-41d4-a716-446655450005'
+            )
+    )
+    ORDER BY random()
+    LIMIT 3
+) flats;
+
+-- Также добавим несколько случаев, где в одной квартире живут несколько человек
+-- Для этого выберем несколько квартир в том же доме и добавим к ним дополнительных жильцов
+
+WITH selected_flats AS (
+    -- Выбираем 5 случайных квартир из дома на Ленина, 41
+    SELECT id as flat_id
+    FROM flats
+    WHERE house_id = '550e8400-e29b-41d4-a716-446655440001'::uuid
+    ORDER BY random()
+    LIMIT 5
+),
+     additional_persons AS (
+         -- Выбираем 5 случайных жильцов, которые еще не живут в этих конкретных квартирах
+         SELECT p.id as person_id
+         FROM persons p
+         WHERE EXISTS (
+             SELECT 1
+             FROM flat_person fp
+                      JOIN flats f ON fp.flat_id = f.id
+             WHERE fp.person_id = p.id
+               AND f.house_id = '550e8400-e29b-41d4-a716-446655440001'::uuid
+         )
+           AND p.id NOT IN (
+             SELECT fp.person_id
+             FROM flat_person fp
+                      JOIN selected_flats sf ON fp.flat_id = sf.flat_id
+         )
+         ORDER BY random()
+         LIMIT 5
+     )
+INSERT INTO flat_person (id, flat_id, person_id)
+SELECT
+    gen_random_uuid(),
+    sf.flat_id,
+    ap.person_id
+FROM selected_flats sf
+         JOIN additional_persons ap ON true;
+
+-- Проверочный запрос: посмотрим на квартиры с несколькими жильцами в доме Ленина, 41
+SELECT
+    f.flat_number,
+    h.address,
+    COUNT(fp.person_id) as residents_count,
+    STRING_AGG(p.first_name || ' ' || p.last_name, ', ') as residents
+FROM flats f
+         JOIN houses h ON f.house_id = h.id
+         JOIN flat_person fp ON f.id = fp.flat_id
+         JOIN persons p ON fp.person_id = p.id
+WHERE h.address = 'Пр-т Ленина, 41'
+GROUP BY f.id, f.flat_number, h.address
+HAVING COUNT(fp.person_id) > 1
+ORDER BY residents_count DESC;

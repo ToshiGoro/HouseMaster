@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Schema(description = "DTO с основной информацией для работы со списком всех людей")
@@ -30,6 +30,6 @@ public class PersonResponseDto {
     private Boolean gender;
 
     @Schema(description = "Дата рождения")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
 }

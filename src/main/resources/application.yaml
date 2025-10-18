@@ -9,7 +9,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/house_db
     username: postgres
-    password: 
+    password: SufferingIsAWayToHeaven
 
   jpa:
     hibernate:

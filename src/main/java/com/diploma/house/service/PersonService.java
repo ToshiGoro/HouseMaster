@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -79,6 +80,16 @@ public class PersonService {
         personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String
                 .format(PERSON_NOT_FOUND, id)));
         personRepository.deleteById(id);
+
+    }
+
+    public List<PersonResponseDto> getAllPersons() {
+
+        List<Person> persons = personRepository.findAll();
+
+        return persons.stream()
+                .map(personMapper::mapToPersonResponseDto)
+                .toList();
 
     }
 

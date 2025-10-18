@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/houses")
+@RequestMapping("api/houses")
 @Validated
 public class HouseController {
 

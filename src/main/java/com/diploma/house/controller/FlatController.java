@@ -1,11 +1,12 @@
 package com.diploma.house.controller;
 
 import com.diploma.house.dto.FlatResponseDto;
+import com.diploma.house.request.FlatRemoveResidentRequest;
 import com.diploma.house.request.FlatRequest;
+import com.diploma.house.request.FlatAddResidentRequest;
 import com.diploma.house.service.FlatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,20 +45,26 @@ public class FlatController {
     // Метод DELETE не создаём, так как удаление квартир возможно только при удалении дома, к которому они относятся.
     // Это уже настроено в скриптах миграции: FOREIGN KEY (flat_id) REFERENCES flats(id) ON DELETE CASCADE
 
-    @PostMapping("/{flatId}/residents/{personId}")
-    public ResponseEntity<Void> addResident(
-            @PathVariable UUID flatId,
-            @PathVariable UUID personId) {
-        flatService.addResidentToFlat(flatId, personId);
-        return ResponseEntity.ok().build();
+    // Добавить жильца в квартиру
+    @PostMapping("/residents")
+    public ResponseEntity<String> addResident(@RequestBody FlatAddResidentRequest request) {
+        try {
+            flatService.addResidentToFlat(request.flatId(), request.personId());
+            return ResponseEntity.ok("Жилец успешно добавлен в квартиру");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Ошибка при добавлении жильца: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping("/{flatId}/residents/{personId}")
-    public ResponseEntity<Void> removeResident(
-            @PathVariable UUID flatId,
-            @PathVariable UUID personId) {
-        flatService.removeResidentFromFlat(flatId, personId);
-        return ResponseEntity.noContent().build();
+    // Удалить жильца из квартиры
+    @DeleteMapping("/residents")
+    public ResponseEntity<String> removeResident(@RequestBody FlatRemoveResidentRequest request) {
+        try {
+            flatService.removeResidentFromFlat(request.flatId(), request.personId());
+            return ResponseEntity.ok("Жилец успешно удален из квартиры");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Ошибка при удалении жильца: " + e.getMessage());
+        }
     }
 
 }

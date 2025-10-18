@@ -55,42 +55,25 @@ public class FlatService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(FLAT_NOT_FOUND, id)));
 
-        // Если меняется дом - проверяем что новый дом существует
-//        if (!flat.getHouse().getId().equals(request.getHouseId())) {
-//            House newHouse = houseRepository.findById(request.getHouseId())
-//                    .orElseThrow(() -> new EntityNotFoundException(
-//                            String.format(HOUSE_NOT_FOUND, request.getHouseId())));
-//            flat.setHouse(newHouse);
-//        }
-//
-//        flat.setFlatNumber(request.getFlatNumber());
-        // updatedAt обновится автоматически
-
         return flatMapper.mapToFlatResponseDto(flat);
-    }
-
-    @Transactional
-    public void addResidentToFlat(UUID flatId, UUID personId) {
-        Flat flat = flatRepository.findById(flatId).orElseThrow();
-        Person person = personRepository.findById(personId).orElseThrow();
-
-        flat.getResidents().add(person);
-        person.getFlats().add(flat);
-
-        flatRepository.save(flat);
 
     }
 
     @Transactional
     public void removeResidentFromFlat(UUID flatId, UUID personId) {
-        Flat flat = flatRepository.findById(flatId).orElseThrow();
-        Person person = personRepository.findById(personId).orElseThrow();
+        int deletedCount = flatRepository.deleteResidentFromFlat(flatId, personId);
+        if (deletedCount == 0) {
+            throw new IllegalStateException("Человек не проживает в этой квартире");
+        }
+    }
 
-        flat.getResidents().remove(person);
-        person.getFlats().remove(flat);
-
-        flatRepository.save(flat);
-
+    @Transactional
+    public void addResidentToFlat(UUID flatId, UUID personId) {
+        boolean exists = flatRepository.existsResidentInFlat(flatId, personId);
+        if (exists) {
+            throw new IllegalStateException("Человек уже проживает в этой квартире");
+        }
+        flatRepository.addResidentToFlat(flatId, personId);
     }
 
 }

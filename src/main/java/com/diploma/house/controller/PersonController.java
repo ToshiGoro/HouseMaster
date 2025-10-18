@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,9 +35,19 @@ public class PersonController {
     @GetMapping("/get/{id}")
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable UUID id) {
 
-        PersonResponseDto customerResponseDto = personService.getPerson(id);
+        PersonResponseDto personResponseDto = personService.getPerson(id);
 
-        return ResponseEntity.ok(customerResponseDto);
+        return ResponseEntity.ok(personResponseDto);
+
+    }
+
+    @Operation(summary = "Получить список всех людей")
+    @GetMapping("/all")
+    public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+
+        List<PersonResponseDto> dtos = personService.getAllPersons();
+
+        return ResponseEntity.ok(dtos);
 
     }
 

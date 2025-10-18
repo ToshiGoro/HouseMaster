@@ -7,8 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -40,7 +40,7 @@ public class Flat {
             joinColumns = @JoinColumn(name = "flat_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )
-    private Set<Person> residents = new HashSet<>();
+    private List<Person> residents = new ArrayList<>();
 
     @LastModifiedDate
     private LocalDateTime updatedAt;

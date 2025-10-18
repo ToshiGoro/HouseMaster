@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Schema(description = "DTO запроса создания человека")
 @Data
@@ -35,6 +35,6 @@ public class PersonRequest {
 
     @Schema(description = "Дата рождения")
     @JsonProperty("birthDate")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
 }

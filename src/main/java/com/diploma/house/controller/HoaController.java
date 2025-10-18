@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/hoas")
+@RequestMapping("api/hoas")
 @Validated
 public class HoaController {
 

@@ -5,8 +5,9 @@ const houseId = urlParams.get('houseId');
 const buttonAction = [
     ["Дом", "EditHouse/editHouse.html", "images/House.jpg"],
     ["Штат", "https://google.com", "images/stuff.png"],
+    ["Квартиры", "Flats/Flats.html", "images/flats.jpg"],
     ["Жители", "house.html", 'images/people.jpg'],
-    ["На главную", "../index.html", "images/toHomePage.jpg"]
+    ["На главную", "BackToMain", "images/toHomePage.jpg"]
 ];
 
 const buttonRange = buttonAction.length;
@@ -67,7 +68,7 @@ function setHousePage() {
         if (!button) return; // если кликнули мимо кнопки
 
         let choice = parseInt(button.id.replaceAll(/\D/g, ""));
-        if (choice === 3) {
+        if (buttonAction[choice][1] === "BackToMain") {
             history.back();
         } else {
             window.open(

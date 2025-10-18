@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квартиры дома</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: url('../../images/StarterBackground.png') center/cover no-repeat fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 40px;
+            right: calc(50% - 600px + 20px);
+            background-color: rgba(80, 80, 255, 50%);
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+
+        .close-btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(80, 80, 255, 35%);
+            border-radius: 10px;
+            border: 1px solid grey;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(80, 80, 255, 80%) 0%, rgba(120, 80, 200, 80%) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            font-weight: 300;
+        }
+
+        .header .subtitle {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 15px;
+            background: rgba(80, 80, 255, 25%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 3px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 0.85em;
+            background: white;
+            border: 2px solid rgba(80, 80, 255, 70%);
+        }
+
+        thead {
+            background-color: rgba(80, 80, 255, 70%);
+            color: white;
+        }
+
+        th {
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.2s ease;
+            height: 35px;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(80, 80, 255, 0.1);
+        }
+
+        td {
+            padding: 6px 4px;
+            vertical-align: top;
+            border-right: 1px solid #dee2e6;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        .flat-number-btn {
+            font-weight: 600;
+            color: #495057;
+            min-width: 60px;
+            text-align: center;
+            background-color: rgba(80, 80, 255, 0.1);
+            border: 1px solid rgba(80, 80, 255, 0.3);
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block;
+            margin: 0 auto;
+            font-size: 0.9em;
+        }
+
+        .flat-number-btn:hover {
+            background-color: rgba(80, 80, 255, 0.2);
+            border-color: rgba(80, 80, 255, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .flat-number-btn:active {
+            transform: scale(0.95);
+            background-color: rgba(80, 80, 255, 0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .flat-number-cell {
+            background-color: rgba(80, 80, 255, 0.05);
+            border-right: 2px solid rgba(80, 80, 255, 0.3);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .resident-name {
+            font-weight: 500;
+            color: #212529;
+            font-size: 0.9em;
+        }
+
+        .no-residents {
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .empty-flat-row {
+            border-bottom: 1px solid #dee2e6;
+            border-left: 2px solid rgba(80, 80, 255, 0.5);
+        }
+
+        .gender-male {
+            color: #007bff;
+        }
+
+        .gender-female {
+            color: #e83e8c;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 30px;
+            color: #dc3545;
+            background: rgba(248, 215, 218, 0.9);
+            margin: 15px;
+            border-radius: 5px;
+        }
+
+        .resident-group {
+            border-left: 2px solid rgba(80, 80, 255, 0.5);
+        }
+
+        .resident-group-first {
+            border-top: 1px solid rgba(80, 80, 255, 0.3);
+        }
+
+        .resident-group-last {
+            border-bottom: 1px solid rgba(80, 80, 255, 0.3);
+        }
+
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 700px;
+            max-width: 90%;
+            border: 2px solid rgba(80, 80, 255, 70%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-title {
+            font-size: 1.4em;
+            color: rgba(80, 80, 255, 90%);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
+        .flat-info-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(80, 80, 255, 0.05);
+            border-radius: 5px;
+            border-left: 4px solid rgba(80, 80, 255, 70%);
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 120px;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #212529;
+        }
+
+        .residents-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        .residents-table th {
+            background-color: rgba(80, 80, 255, 50%);
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .residents-table td {
+            padding: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .residents-table tr:hover {
+            background-color: rgba(80, 80, 255, 0.05);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(80, 80, 255, 50%);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: rgba(80, 80, 255, 70%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: rgba(80, 80, 255, 80%);
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin: 0 auto;
+        }
+
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+            transform: scale(1.1);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.1);
+        }
+
+        /* Стили для модальных уведомлений */
+        .alert-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .alert-content {
+            background-color: #fefefe;
+            margin: 20% auto;
+            padding: 25px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            border: 2px solid rgba(80, 80, 255, 70%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .alert-title {
+            font-size: 1.3em;
+            color: rgba(80, 80, 255, 90%);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .alert-message {
+            margin-bottom: 25px;
+            color: #333;
+            line-height: 1.5;
+            font-size: 1em;
+        }
+
+        .alert-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .alert-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(80, 80, 255, 50%);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+            min-width: 100px;
+        }
+
+        .alert-btn-primary {
+            background-color: rgba(80, 80, 255, 70%);
+            color: white;
+        }
+
+        .alert-btn-primary:hover {
+            background-color: rgba(80, 80, 255, 80%);
+        }
+
+        .alert-btn-secondary {
+            background-color: #f8f9fa;
+            color: #495057;
+            border-color: #ddd;
+        }
+
+        .alert-btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            th, td {
+                padding: 6px 4px;
+                font-size: 0.75em;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            .close-btn {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .flat-number-btn {
+                min-width: 50px;
+                padding: 3px 6px;
+                font-size: 0.8em;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-buttons {
+                flex-wrap: wrap;
+            }
+
+            .modal-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .alert-content {
+                width: 95%;
+                margin: 15% auto;
+                padding: 20px;
+            }
+
+            .alert-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .alert-btn {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 1240px) {
+            .close-btn {
+                right: calc(50% - 600px + 20px);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(80, 80, 255, 25%);
+        }
+    </style>
+</head>
+<body>
+<button class="close-btn" onclick="window.close()">Закрыть</button>
+
+<!-- Модальное окно для уведомлений -->
+<div id="alertModal" class="alert-modal">
+    <div class="alert-content">
+        <h3 class="alert-title" id="alertTitle">Уведомление</h3>
+        <div class="alert-message" id="alertMessage"></div>
+        <div class="alert-buttons">
+            <button class="alert-btn alert-btn-primary" id="alertOkButton">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения -->
+<div id="confirmModal" class="alert-modal">
+    <div class="alert-content">
+        <h3 class="alert-title" id="confirmTitle">Подтверждение</h3>
+        <div class="alert-message" id="confirmMessage"></div>
+        <div class="alert-buttons">
+            <button class="alert-btn alert-btn-secondary" id="confirmCancelButton">Отмена</button>
+            <button class="alert-btn alert-btn-primary" id="confirmOkButton">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="flatModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Информация о квартире</h2>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+
+        <div class="flat-info-section">
+            <div class="info-row">
+                <span class="info-label">Номер квартиры:</span>
+                <span class="info-value" id="modalFlatNumber">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Дом:</span>
+                <span class="info-value" id="modalHouseAddress">-</span>
+            </div>
+        </div>
+
+        <div>
+            <h3 style="margin-bottom: 10px; color: rgba(80, 80, 255, 90%);">Жильцы квартиры</h3>
+            <table class="residents-table" id="modalResidentsTable">
+                <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Пол</th>
+                    <th>Дата рождения</th>
+                    <th>Возраст</th>
+                    <th style="width: 50px;">Действия</th>
+                </tr>
+                </thead>
+                <tbody id="modalResidentsBody">
+                </tbody>
+            </table>
+            <div id="noResidentsMessage" style="text-align: center; padding: 20px; color: #6c757d; font-style: italic;">
+                В квартире нет зарегистрированных жильцов
+            </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="modal-btn btn-secondary" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Квартирный фонд</h1>
+        <div id="subtitle" class="subtitle"></div>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-item">
+            <div class="stat-number" id="totalFlats">-</div>
+            <div class="stat-label">Всего квартир</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="occupiedFlats">-</div>
+            <div class="stat-label">Заселено</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="emptyFlats">-</div>
+            <div class="stat-label">Свободно</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="totalResidents">-</div>
+            <div class="stat-label">Всего жильцов</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div id="loading" class="loading">
+            Загрузка данных...
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            Ошибка загрузки данных. Пожалуйста, проверьте подключение к серверу.
+        </div>
+
+        <table id="residentsTable" style="display: none;">
+            <thead>
+            <tr>
+                <th>Квартира</th>
+                <th>ФИО жильца</th>
+                <th>Пол</th>
+                <th>Дата рождения</th>
+                <th>Возраст</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Система управления жилым фондом • Обновлено: <span id="updateTime"></span>
+    </div>
+</div>
+
+<script src="../../config.js" defer></script>
+<script defer>
+    const urlParams = new URLSearchParams(window.location.search);
+    const houseId = urlParams.get('houseId');
+    const HOUSE_ID = houseId;
+
+    const elements = {
+        loading: document.getElementById('loading'),
+        error: document.getElementById('error'),
+        table: document.getElementById('residentsTable'),
+        tableBody: document.getElementById('tableBody'),
+        subtitle: document.getElementById('subtitle'),
+        stats: {
+            totalFlats: document.getElementById('totalFlats'),
+            occupiedFlats: document.getElementById('occupiedFlats'),
+            emptyFlats: document.getElementById('emptyFlats'),
+            totalResidents: document.getElementById('totalResidents')
+        },
+        updateTime: document.getElementById('updateTime'),
+        modal: document.getElementById('flatModal'),
+        modalTitle: document.getElementById('modalTitle'),
+        modalFlatNumber: document.getElementById('modalFlatNumber'),
+        modalHouseAddress: document.getElementById('modalHouseAddress'),
+        modalResidentsBody: document.getElementById('modalResidentsBody'),
+        noResidentsMessage: document.getElementById('noResidentsMessage'),
+        alertModal: document.getElementById('alertModal'),
+        alertTitle: document.getElementById('alertTitle'),
+        alertMessage: document.getElementById('alertMessage'),
+        alertOkButton: document.getElementById('alertOkButton'),
+        confirmModal: document.getElementById('confirmModal'),
+        confirmTitle: document.getElementById('confirmTitle'),
+        confirmMessage: document.getElementById('confirmMessage'),
+        confirmCancelButton: document.getElementById('confirmCancelButton'),
+        confirmOkButton: document.getElementById('confirmOkButton')
+    };
+
+    let currentFlatData = null;
+    let houseAddress = '';
+    let scrollPosition = 0;
+
+    // Функции для работы с уведомлениями
+    function showAlert(title, message) {
+        elements.alertTitle.textContent = title;
+        elements.alertMessage.textContent = message;
+        elements.alertModal.style.display = 'block';
+    }
+
+    function hideAlert() {
+        elements.alertModal.style.display = 'none';
+    }
+
+    function showConfirm(title, message) {
+        return new Promise((resolve) => {
+            elements.confirmTitle.textContent = title;
+            elements.confirmMessage.textContent = message;
+            elements.confirmModal.style.display = 'block';
+
+            const cleanup = () => {
+                elements.confirmModal.style.display = 'none';
+                elements.confirmOkButton.onclick = null;
+                elements.confirmCancelButton.onclick = null;
+            };
+
+            elements.confirmOkButton.onclick = () => {
+                cleanup();
+                resolve(true);
+            };
+
+            elements.confirmCancelButton.onclick = () => {
+                cleanup();
+                resolve(false);
+            };
+        });
+    }
+
+    // Настройка обработчиков для модальных окон уведомлений
+    elements.alertOkButton.onclick = hideAlert;
+    elements.alertModal.onclick = function(e) {
+        if (e.target === elements.alertModal) {
+            hideAlert();
+        }
+    };
+    elements.confirmModal.onclick = function(e) {
+        if (e.target === elements.confirmModal) {
+            elements.confirmModal.style.display = 'none';
+        }
+    };
+
+    function saveScrollPosition() {
+        scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    }
+
+    function restoreScrollPosition() {
+        window.scrollTo(0, scrollPosition);
+    }
+
+    function showFlatInfo(flatNumber, flatId, residents = []) {
+        currentFlatData = {
+            flatNumber: flatNumber,
+            flatId: flatId,
+            residents: residents
+        };
+
+        elements.modalTitle.textContent = `Квартира №${flatNumber}`;
+        elements.modalFlatNumber.textContent = flatNumber;
+        elements.modalHouseAddress.textContent = houseAddress;
+
+        updateResidentsTable(residents);
+        elements.modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        saveScrollPosition();
+        elements.modal.style.display = 'none';
+        currentFlatData = null;
+        loadData();
+    }
+
+    function updateResidentsTable(residents) {
+        const tbody = elements.modalResidentsBody;
+        tbody.innerHTML = '';
+
+        if (residents && residents.length > 0) {
+            elements.noResidentsMessage.style.display = 'none';
+
+            residents.forEach(resident => {
+                const age = calculateAge(resident.birthDate);
+                const formattedAge = formatAge(age);
+                const genderText = formatGender(resident.gender);
+                const genderClass = resident.gender ? 'gender-male' : 'gender-female';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${resident.lastName} ${resident.firstName} ${resident.secondName || ''}</td>
+                    <td class="${genderClass}">${genderText}</td>
+                    <td>${formatDate(resident.birthDate)}</td>
+                    <td>${formattedAge}</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn delete-btn" onclick="removeResident('${resident.id}')" title="Удалить жильца">
+                            ×
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            const addRow = document.createElement('tr');
+            addRow.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+            addRow.innerHTML = `
+                <td style="font-style: italic; color: #28a745;">Новый жилец</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="text-align: center;">
+                    <button class="action-btn add-btn" onclick="showAddResidentDialog()" title="Добавить жильца">
+                        +
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(addRow);
+
+        } else {
+            elements.noResidentsMessage.style.display = 'block';
+
+            const addRow = document.createElement('tr');
+            addRow.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+            addRow.innerHTML = `
+                <td style="font-style: italic; color: #28a745;">Добавить первого жильца</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="text-align: center;">
+                    <button class="action-btn add-btn" onclick="showAddResidentDialog()" title="Добавить жильца">
+                        +
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(addRow);
+        }
+    }
+
+    async function removeResident(personId) {
+        if (!currentFlatData) return;
+
+        const confirmed = await showConfirm(
+            'Удаление жильца',
+            'Вы уверены, что хотите удалить этого жильца из квартиры?'
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/flats/residents`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    flatId: currentFlatData.flatId,
+                    personId: personId
+                })
+            });
+
+            if (response.ok) {
+                await refreshModalData();
+            } else {
+                const errorText = await response.text();
+                showAlert('Ошибка', 'Ошибка при удалении: ' + errorText);
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showAlert('Ошибка', 'Ошибка при удалении жителя');
+        }
+    }
+
+    async function refreshModalData() {
+        try {
+            const flatsData = await loadFlatsData();
+            const currentFlat = flatsData.find(flat => flat.id === currentFlatData.flatId);
+            if (currentFlat) {
+                updateResidentsTable(currentFlat.residents || []);
+            }
+        } catch (error) {
+            console.error('Ошибка обновления данных:', error);
+        }
+    }
+
+    function showAddResidentDialog() {
+        getAvailablePersons().then(persons => {
+            if (persons.length === 0) {
+                showAlert('Информация', 'Нет доступных жителей для добавления');
+                return;
+            }
+
+            // Создаём модальное окно для выбора
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                min-width: 400px;
+                max-width: 90%;
+            `;
+
+            const options = persons.map(person =>
+                `<option value="${person.id}">${person.lastName} ${person.firstName} ${person.secondName || ''}</option>`
+            ).join('');
+
+            dialog.innerHTML = `
+                <h3 style="margin-bottom: 15px; color: rgba(80, 80, 255, 90%);">Добавить жильца</h3>
+                <div style="margin: 10px 0;">
+                    <label for="personSelect" style="display: block; margin-bottom: 8px; font-weight: bold;">Выберите жильца:</label>
+                    <select id="personSelect" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">-- Выберите жильца --</option>
+                        ${options}
+                    </select>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button id="cancelBtn" style="padding: 8px 16px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; cursor: pointer;">
+                        Отмена
+                    </button>
+                    <button id="addBtn" style="padding: 8px 16px; border: 1px solid rgba(80, 80, 255, 50%); border-radius: 4px; background: rgba(80, 80, 255, 70%); color: white; cursor: pointer;">
+                        Добавить
+                    </button>
+                </div>
+            `;
+
+            modal.appendChild(dialog);
+            document.body.appendChild(modal);
+
+            // Обработчики событий
+            document.getElementById('cancelBtn').onclick = function() {
+                document.body.removeChild(modal);
+            };
+
+            document.getElementById('addBtn').onclick = function() {
+                const select = document.getElementById('personSelect');
+                const selectedPersonId = select.value;
+                if (selectedPersonId) {
+                    document.body.removeChild(modal);
+                    addResident(selectedPersonId);
+                } else {
+                    showAlert('Внимание', 'Пожалуйста, выберите жильца');
+                }
+            };
+
+            // Закрытие по клику вне диалога
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+        });
+    }
+
+    async function addResident(personId) {
+        if (!currentFlatData) return;
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/flats/residents`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    flatId: currentFlatData.flatId,
+                    personId: personId
+                })
+            });
+
+            if (response.ok) {
+                await refreshModalData();
+            } else {
+                const errorText = await response.text();
+                showAlert('Ошибка', 'Ошибка при добавлении: ' + errorText);
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showAlert('Ошибка', 'Ошибка при добавлении жителя');
+        }
+    }
+
+    async function getAvailablePersons() {
+        try {
+            const response = await fetch(`${BACKEND_URL}/persons/all`);
+            if (response.ok) {
+                const persons = await response.json();
+                const currentResidentIds = currentFlatData.residents ? currentFlatData.residents.map(r => r.id) : [];
+                return persons.filter(person => !currentResidentIds.includes(person.id));
+            }
+            return [];
+        } catch (error) {
+            console.error('Ошибка получения списка жителей:', error);
+            return [];
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target === elements.modal) {
+            closeModal();
+        }
+    }
+
+    function formatGender(gender) {
+        return gender ? 'Мужской' : 'Женский';
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return 'Неизвестно';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
+    }
+
+    function calculateAge(birthDate) {
+        if (!birthDate) return 'Неизвестно';
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+
+    function formatAge(age) {
+        if (age === 'Неизвестно') return age;
+
+        const lastDigit = age % 10;
+        const lastTwoDigits = age % 100;
+
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+            return age + ' лет';
+        }
+
+        if (lastDigit === 1) {
+            return age + ' год';
+        }
+
+        if (lastDigit >= 2 && lastDigit <= 4) {
+            return age + ' года';
+        }
+
+        return age + ' лет';
+    }
+
+    async function apiRequest(endpoint) {
+        try {
+            const response = await fetch(`${BACKEND_URL}${endpoint}`);
+
+            if (!response.ok) {
+                throw new Error(`Ошибка HTTP! Статус: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(`Ошибка API-запроса для ${endpoint}:`, error);
+            throw error;
+        }
+    }
+
+    async function loadHouseData() {
+        try {
+            const houseData = await apiRequest(`/houses/get/${HOUSE_ID}`);
+            return houseData;
+        } catch (error) {
+            console.error('Ошибка загрузки данных дома:', error);
+            return null;
+        }
+    }
+
+    async function loadFlatsData() {
+        try {
+            const flatsData = await apiRequest(`/flats/get/by-house/${HOUSE_ID}`);
+            return flatsData;
+        } catch (error) {
+            console.error('Ошибка загрузки данных квартир:', error);
+            throw error;
+        }
+    }
+
+    function updateHeader(houseData) {
+        if (houseData && houseData.address) {
+            elements.subtitle.textContent = houseData.address;
+            houseAddress = houseData.address;
+        } else {
+            elements.subtitle.textContent = 'Адрес не указан';
+            houseAddress = 'Адрес не указан';
+        }
+    }
+
+    async function loadData() {
+        saveScrollPosition();
+
+        try {
+            elements.loading.style.display = 'block';
+            elements.error.style.display = 'none';
+            elements.table.style.display = 'none';
+
+            const houseData = await loadHouseData();
+            updateHeader(houseData);
+
+            const flatsData = await loadFlatsData();
+
+            renderTable(flatsData);
+            updateStats(flatsData);
+            updateTimestamp();
+
+        } catch (error) {
+            console.error('Ошибка загрузки данных:', error);
+            elements.loading.style.display = 'none';
+            elements.error.style.display = 'block';
+            elements.table.style.display = 'none';
+        } finally {
+            setTimeout(restoreScrollPosition, 100);
+        }
+    }
+
+    function renderTable(flatsData) {
+        const sortedFlats = [...flatsData].sort((a, b) => a.flatNumber - b.flatNumber);
+
+        let html = '';
+
+        sortedFlats.forEach(flat => {
+            if (!flat.residents || flat.residents.length === 0) {
+                html += `
+                        <tr class="empty-flat-row">
+                            <td class="flat-number-cell">
+                                <button class="flat-number-btn" onclick="showFlatInfo(${flat.flatNumber}, '${flat.id}', ${JSON.stringify([]).replace(/"/g, '&quot;')})">
+                                    ${flat.flatNumber}
+                                </button>
+                            </td>
+                            <td colspan="4" class="no-residents">Нет зарегистрированных жильцов</td>
+                        </tr>
+                    `;
+            } else {
+                flat.residents.forEach((resident, index) => {
+                    const age = calculateAge(resident.birthDate);
+                    const formattedAge = formatAge(age);
+                    const genderClass = resident.gender ? 'gender-male' : 'gender-female';
+                    const isFirstInGroup = index === 0;
+                    const isLastInGroup = index === flat.residents.length - 1;
+                    let rowClass = 'resident-group';
+
+                    if (isFirstInGroup) rowClass += ' resident-group-first';
+                    if (isLastInGroup) rowClass += ' resident-group-last';
+
+                    html += `
+                            <tr class="${rowClass}">
+                                ${isFirstInGroup ?
+                        `<td class="flat-number-cell" rowspan="${flat.residents.length}">
+                            <button class="flat-number-btn" onclick="showFlatInfo(${flat.flatNumber}, '${flat.id}', ${JSON.stringify(flat.residents).replace(/"/g, '&quot;')})">
+                                ${flat.flatNumber}
+                            </button>
+                         </td>` :
+                        ''
+                    }
+                                <td>
+                                    <div class="resident-name">
+                                        ${resident.lastName} ${resident.firstName} ${resident.secondName}
+                                    </div>
+                                </td>
+                                <td class="${genderClass}">
+                                    ${formatGender(resident.gender)}
+                                </td>
+                                <td>${formatDate(resident.birthDate)}</td>
+                                <td>${formattedAge}</td>
+                            </tr>
+                        `;
+                });
+            }
+        });
+
+        elements.tableBody.innerHTML = html;
+        elements.loading.style.display = 'none';
+        elements.table.style.display = 'table';
+    }
+
+    function updateStats(flatsData) {
+        const totalFlats = flatsData.length;
+        const occupiedFlats = flatsData.filter(flat => flat.residents && flat.residents.length > 0).length;
+        const emptyFlats = totalFlats - occupiedFlats;
+
+        // Считаем УНИКАЛЬНЫХ жильцов
+        const allResidents = flatsData.flatMap(flat => flat.residents || []);
+        const uniqueResidents = new Set(allResidents.map(resident => resident.id));
+        const totalResidents = uniqueResidents.size;
+
+        elements.stats.totalFlats.textContent = totalFlats;
+        elements.stats.occupiedFlats.textContent = occupiedFlats;
+        elements.stats.emptyFlats.textContent = emptyFlats;
+        elements.stats.totalResidents.textContent = totalResidents;
+    }
+
+    function updateTimestamp() {
+        const now = new Date();
+        elements.updateTime.textContent = now.toLocaleString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        loadData();
+        setInterval(loadData, 5 * 60 * 1000);
+    });
+
+    window.addEventListener('error', function (e) {
+        console.error('Global error:', e.error);
+    });
+</script>
+</body>
+</html>
